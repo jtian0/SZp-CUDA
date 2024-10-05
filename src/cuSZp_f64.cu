@@ -7,14 +7,21 @@ __device__ inline int quantization_f64(double data, double recipPrecision)
     return (int)(dataRecip+0.5) - s;
 }
 
-
+#ifndef NON_INTRUSIVE_MOD_2410
 __device__ inline int get_bit_num(unsigned int x)
 {
     return (sizeof(unsigned int)*8) - __clz(x);
 }
+#else
+#endif
 
 
-__global__ void SZp_compress_kernel_f64(const double* const __restrict__ oriData, unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const double eb, const size_t nbEle)
+#ifndef NON_INTRUSIVE_MOD_2410
+__global__ void SZp_compress_kernel_f64
+#else
+__global__ void KERNEL_CUHIP_szp_compress_singleton_f8
+#endif
+(const double* const __restrict__ oriData, unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const double eb, const size_t nbEle)
 {
     __shared__ unsigned int base_idx;
 
@@ -181,8 +188,12 @@ __global__ void SZp_compress_kernel_f64(const double* const __restrict__ oriData
     }
 }
 
-
-__global__ void SZp_decompress_kernel_f64(double* const __restrict__ decData, const unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const double eb, const size_t nbEle)
+#ifndef NON_INTRUSIVE_MOD_2410
+__global__ void SZp_decompress_kernel_f64
+#else
+__global__ void KERNEL_CUHIP_szp_decompress_singleton_f8
+#endif
+(double* const __restrict__ decData, const unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const double eb, const size_t nbEle)
 {
     __shared__ unsigned int base_idx;
 

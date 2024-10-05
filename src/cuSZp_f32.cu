@@ -13,8 +13,12 @@ __device__ inline int get_bit_num(unsigned int x)
     return (sizeof(unsigned int)*8) - __clz(x);
 }
 
-
-__global__ void SZp_compress_kernel_f32(const float* const __restrict__ oriData, unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const float eb, const size_t nbEle)
+#ifndef NON_INTRUSIVE_MOD_2410
+__global__ void SZp_compress_kernel_f32
+#else
+__global__ void KERNEL_CUHIP_szp_compress_singleton_f4
+#endif 
+(const float* const __restrict__ oriData, unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const float eb, const size_t nbEle)
 {
     __shared__ unsigned int base_idx;
 
@@ -182,7 +186,12 @@ __global__ void SZp_compress_kernel_f32(const float* const __restrict__ oriData,
 }
 
 
-__global__ void SZp_decompress_kernel_f32(float* const __restrict__ decData, const unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const float eb, const size_t nbEle)
+#ifndef NON_INTRUSIVE_MOD_2410
+__global__ void SZp_decompress_kernel_f32
+#else
+__global__ void KERNEL_CUHIP_szp_decompress_singleton_f4
+#endif
+(float* const __restrict__ decData, const unsigned char* const __restrict__ cmpData, volatile unsigned int* const __restrict__ cmpOffset, volatile int* const __restrict__ flag, const float eb, const size_t nbEle)
 {
     __shared__ unsigned int base_idx;
 
